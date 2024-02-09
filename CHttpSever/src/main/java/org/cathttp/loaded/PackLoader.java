@@ -1,6 +1,7 @@
 package org.cathttp.loaded;
 
 import org.cathttp.base.net.inter.LifeCycle;
+import org.cathttp.tools.FileFilter;
 import org.cathttp.tools.StringTools;
 
 import java.io.File;
@@ -52,6 +53,9 @@ public class PackLoader implements Loader, LifeCycle {
              }
           }
         }
+
+    }
+    public void walkClass(FileFilter filter){
 
     }
     public PackLoader(){
