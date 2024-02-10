@@ -1,21 +1,25 @@
 package org.cathttp.loaded;
 
 import org.cathttp.base.net.inter.LifeCycle;
+import org.cathttp.base.servlet.ServletProxy;
 import org.cathttp.tools.FileFilter;
 import org.cathttp.tools.StringTools;
 
+import javax.servlet.Servlet;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class PackLoader implements Loader, LifeCycle {
     String basePath;
     String[] packPath;
     ArrayList<Class<?>> classArrayList = new ArrayList<>();
+    ArrayList<HttpServlet> httpServlets = new ArrayList<>();
+    Map<String, ServletProxy> httpServletMap = new HashMap<>();
     public String getPackPath(String packName){
 
         String packPath = StringTools.replaceFileSeparator(packName,".");
@@ -30,7 +34,7 @@ public class PackLoader implements Loader, LifeCycle {
 
     }
 
-    public void walkClass(String name){
+    public void walkClass(String name) throws ClassNotFoundException {
         ArrayDeque<File> fileDeque = new ArrayDeque<>();
         File file = new File(name);
         if (!file.exists()){
@@ -49,7 +53,17 @@ public class PackLoader implements Loader, LifeCycle {
              String path = f.getAbsolutePath();
              if (path.contains(".class")){
                  String s  = path.substring(basePath.length()-1,path.lastIndexOf(".class"));
-                 System.out.println(s.replace("\\","."));
+                 Class<?>  c = Class.forName( s.replace("\\","."))  ;
+                 if (c.isAssignableFrom(HttpServlet.class)){
+                     Annotation[] annotations = c.getAnnotations();
+                     for (int i=0;i<annotations.length;i++){
+                         if (annotations[i] instanceof WebServlet){
+
+
+                         }
+                     }
+                 }
+
              }
           }
         }
@@ -65,7 +79,12 @@ public class PackLoader implements Loader, LifeCycle {
 
     @Override
     public void init() {
+        try {
             walkClass(basePath);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @Override
