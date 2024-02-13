@@ -109,6 +109,7 @@ public class BusinessThreadPool implements LifeCycle {
                     System.out.println("被拒绝次数："+key);
                     key = 0;
                 }catch (RejectedExecutionException r0){
+                    Thread.sleep(100);
                     key = key + 1;
                 }
             }

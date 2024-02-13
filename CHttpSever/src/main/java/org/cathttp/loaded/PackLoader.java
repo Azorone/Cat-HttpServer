@@ -27,14 +27,12 @@ public class PackLoader implements Loader, LifeCycle {
         this.basePath = classPack;
         return classPack+packPath;
     }
-
     public Class<?> loadClass(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
         return Class.forName(className);
 
     }
-
-    public void walkClass(String name) throws ClassNotFoundException {
+    public void walkClass(String name) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         ArrayDeque<File> fileDeque = new ArrayDeque<>();
         File file = new File(name);
         if (!file.exists()){
@@ -42,7 +40,6 @@ public class PackLoader implements Loader, LifeCycle {
         }
         fileDeque.add(file);
         while (!fileDeque.isEmpty()){
-
           File f=  fileDeque.remove();
           if (f.isDirectory()){
               File[] fs = f.listFiles();
@@ -59,7 +56,13 @@ public class PackLoader implements Loader, LifeCycle {
                      for (int i=0;i<annotations.length;i++){
                          if (annotations[i] instanceof WebServlet){
 
+                             WebServlet webServlet = (WebServlet) annotations[i];
 
+                             Constructor<HttpServlet> constructor = (Constructor<HttpServlet>) c.getConstructor();
+                             HttpServlet object = constructor.newInstance();
+                             ServletProxy proxy    = new ServletProxy(webServlet,object);
+                             httpServletMap.put(webServlet.name(),proxy);
+                             break;
                          }
                      }
                  }
@@ -74,13 +77,25 @@ public class PackLoader implements Loader, LifeCycle {
     }
     public PackLoader(){
 
+    }
+    public PackLoader(String[] packs){
+        this.packPath = new String[packs.length];
+
+        for(int i=0;i< packs.length;i++){
+            this.packPath[i] = getPackPath(packs[i]);
+        }
 
     }
 
     @Override
     public void init() {
         try {
-            walkClass(basePath);
+            if (packPath != null){
+                for (String s:packPath) {
+                    System.out.println(s);
+                    walkClass(s);
+                }
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

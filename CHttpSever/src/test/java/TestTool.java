@@ -1,5 +1,4 @@
 import org.cathttp.loaded.PackLoader;
-import org.cathttp.tools.SysInfo;
 import org.junit.Test;
 
 import java.io.File;
@@ -17,12 +16,17 @@ public class TestTool {
     @Test
     public void testClassPathLoader(){
         PackLoader packLoader = new PackLoader();
-        String path = packLoader.getPackPath("tools");
+        String path = packLoader.getPackPath("testS");
         File file = new File(path);
         if (file.exists()){
            System.out.println(file.getPath());
         }else {
             System.out.println("不存在");
         }
+    }
+    @Test
+    public void builderLoader(){
+        PackLoader loader = new PackLoader();
+
     }
 }
