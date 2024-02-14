@@ -1,12 +1,10 @@
 package org.cathttp.base.app;
 
 import org.cathttp.base.net.inter.LifeCycle;
-import org.cathttp.base.servlet.ServletProxy;
+import org.cathttp.javaee.servlet.ServletProxy;
 
 import javax.servlet.FilterChain;
-import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 

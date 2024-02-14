@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(
-        name = "test",
+        name = "testB",
         urlPatterns = "/asd"
 )
 public class oo extends HttpServlet {

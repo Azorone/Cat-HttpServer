@@ -1,4 +1,4 @@
-package org.cathttp.base.servlet;
+package org.cathttp.javaee.servlet;
 
 import javax.servlet.*;
 import javax.servlet.descriptor.JspConfigDescriptor;

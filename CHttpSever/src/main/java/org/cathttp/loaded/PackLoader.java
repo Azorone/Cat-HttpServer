@@ -1,11 +1,10 @@
 package org.cathttp.loaded;
 
 import org.cathttp.base.net.inter.LifeCycle;
-import org.cathttp.base.servlet.ServletProxy;
+import org.cathttp.javaee.servlet.ServletProxy;
 import org.cathttp.tools.FileFilter;
 import org.cathttp.tools.StringTools;
 
-import javax.servlet.Servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import java.io.File;
@@ -17,9 +16,9 @@ import java.util.*;
 public class PackLoader implements Loader, LifeCycle {
     String basePath;
     String[] packPath;
-    ArrayList<Class<?>> classArrayList = new ArrayList<>();
-    ArrayList<HttpServlet> httpServlets = new ArrayList<>();
-    Map<String, ServletProxy> httpServletMap = new HashMap<>();
+    public ArrayList<Class<?>> classArrayList = new ArrayList<>();
+    public ArrayList<HttpServlet> httpServlets = new ArrayList<>();
+    public  Map<String, ServletProxy> httpServletMap = new HashMap<>();
     public String getPackPath(String packName){
 
         String packPath = StringTools.replaceFileSeparator(packName,".");
@@ -51,7 +50,7 @@ public class PackLoader implements Loader, LifeCycle {
              if (path.contains(".class")){
                  String s  = path.substring(basePath.length()-1,path.lastIndexOf(".class"));
                  Class<?>  c = Class.forName( s.replace("\\","."))  ;
-                 if (c.isAssignableFrom(HttpServlet.class)){
+                 if (HttpServlet.class.isAssignableFrom(c)){
                      Annotation[] annotations = c.getAnnotations();
                      for (int i=0;i<annotations.length;i++){
                          if (annotations[i] instanceof WebServlet){
@@ -78,7 +77,7 @@ public class PackLoader implements Loader, LifeCycle {
     public PackLoader(){
 
     }
-    public PackLoader(String[] packs){
+    public PackLoader(String ...packs){
         this.packPath = new String[packs.length];
 
         for(int i=0;i< packs.length;i++){
@@ -86,6 +85,8 @@ public class PackLoader implements Loader, LifeCycle {
         }
 
     }
+
+
 
     @Override
     public void init() {
