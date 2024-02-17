@@ -1,29 +1,84 @@
-package org.cathttp.javaee.servlet;
+package org.cathttp.javaee.context;
+
+import org.cathttp.base.net.inter.LifeCycle;
+import org.cathttp.javaee.filter.FilterChainImplement;
+import org.cathttp.javaee.filter.FilterProxy;
+import org.cathttp.javaee.servlet.ServletProxy;
 
 import javax.servlet.*;
 import javax.servlet.descriptor.JspConfigDescriptor;
+import javax.servlet.http.HttpSessionListener;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.EventListener;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class ServletContextImp implements javax.servlet.ServletContext {
+public class ServletContextImp implements javax.servlet.ServletContext, LifeCycle {
+
+    ArrayList<ServletProxy> servletProxies = new ArrayList<>();
+    ArrayList<FilterProxy> filterProxies   = new ArrayList<>();
+    FilterChainImplement filterChainImplement = new FilterChainImplement();
+    private static ServletContextImp servletContext = new ServletContextImp();
+    ConcurrentHashMap<String,Object> Attribute = new ConcurrentHashMap<>();
+
+    int MajorVersion = 0;
+
+    String contextPath;
+
+    private void sortFilter(){
+        filterProxies.sort(new Comparator<FilterProxy>() {
+            @Override
+            public int compare(FilterProxy o1, FilterProxy o2) {
+                return 0;
+            }
+        });
+    }
+    private void sortServlet(){
+        servletProxies.sort(new Comparator<ServletProxy>() {
+            @Override
+            public int compare(ServletProxy o1, ServletProxy o2) {
+                return 0;
+            }
+        });
+    }
+
+    private void  init0(){
+        for (FilterProxy fp:filterProxies){
+            fp.init();
+            filterChainImplement.addFilter(fp.getCurFilter());
+        }
+        for (ServletProxy sp:servletProxies){
+            sp.getServlet();
+            sp.init();
+        }
+    }
+    @Override
+    public void init() {
+
+
+
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
     @Override
     public String getContextPath() {
-        return null;
+        return contextPath;
     }
 
     @Override
     public ServletContext getContext(String s) {
-        return null;
+        return servletContext;
     }
 
     @Override
     public int getMajorVersion() {
-        return 0;
+        return MajorVersion;
     }
 
     @Override
@@ -40,12 +95,12 @@ public class ServletContextImp implements javax.servlet.ServletContext {
     public int getEffectiveMinorVersion() {
         return 0;
     }
-
+    //获取文件的MimeType
     @Override
     public String getMimeType(String s) {
         return null;
     }
-
+    //或取s下的资源目录
     @Override
     public Set<String> getResourcePaths(String s) {
         return null;
@@ -55,12 +110,12 @@ public class ServletContextImp implements javax.servlet.ServletContext {
     public URL getResource(String s) throws MalformedURLException {
         return null;
     }
-
+    //获取s资源文件的输入流
     @Override
     public InputStream getResourceAsStream(String s) {
         return null;
     }
-
+    //
     @Override
     public RequestDispatcher getRequestDispatcher(String s) {
         return null;
@@ -70,7 +125,7 @@ public class ServletContextImp implements javax.servlet.ServletContext {
     public RequestDispatcher getNamedDispatcher(String s) {
         return null;
     }
-
+    //
     @Override
     public Servlet getServlet(String s) throws ServletException {
         return null;
@@ -100,7 +155,7 @@ public class ServletContextImp implements javax.servlet.ServletContext {
     public void log(String s, Throwable throwable) {
 
     }
-
+    //获取真实路径
     @Override
     public String getRealPath(String s) {
         return null;

@@ -90,6 +90,8 @@ public class Worker extends Thread implements LifeCycle {
 
                   }
               }
+
+
           });
       }catch (InterruptedException exception){
           System.out.println("线程终止");

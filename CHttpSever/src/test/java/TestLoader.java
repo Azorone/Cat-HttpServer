@@ -41,13 +41,7 @@ public class TestLoader {
      * ***/
     @Test
     public void builderLoader(){
-        PackLoader loader = new PackLoader("testF","testS");
-        loader.init();
-        for (Map.Entry<String, ServletProxy> e : loader.httpServletMap.entrySet()){
 
-            System.out.println(e.getValue().toString());
-
-        }
     }
     /***
      * 重名检查

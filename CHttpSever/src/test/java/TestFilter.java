@@ -1,6 +1,6 @@
 import org.cathttp.javaee.filter.FilterChainImplement;
-import org.cathttp.javaee.servlet.ServletRequestImplement;
-import org.cathttp.javaee.servlet.ServletResponseImplements;
+import org.cathttp.javaee.request.ServletRequestImplement;
+import org.cathttp.javaee.response.ServletResponseImplements;
 import org.junit.Test;
 
 import javax.servlet.*;

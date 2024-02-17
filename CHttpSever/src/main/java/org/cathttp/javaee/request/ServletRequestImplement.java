@@ -1,4 +1,4 @@
-package org.cathttp.javaee.servlet;
+package org.cathttp.javaee.request;
 
 import javax.servlet.*;
 import javax.servlet.http.*;

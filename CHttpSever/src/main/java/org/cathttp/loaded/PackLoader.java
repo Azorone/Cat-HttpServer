@@ -1,10 +1,15 @@
 package org.cathttp.loaded;
 
 import org.cathttp.base.net.inter.LifeCycle;
+import org.cathttp.javaee.filter.FilterProxy;
 import org.cathttp.javaee.servlet.ServletProxy;
 import org.cathttp.tools.FileFilter;
 import org.cathttp.tools.StringTools;
 
+import javax.servlet.Filter;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import java.io.File;
@@ -17,8 +22,9 @@ public class PackLoader implements Loader, LifeCycle {
     String basePath;
     String[] packPath;
     public ArrayList<Class<?>> classArrayList = new ArrayList<>();
-    public ArrayList<HttpServlet> httpServlets = new ArrayList<>();
-    public  Map<String, ServletProxy> httpServletMap = new HashMap<>();
+    public ArrayList<ServletProxy> httpServlets = new ArrayList<>();
+    public ArrayList<FilterProxy> filterProxies = new ArrayList<>();
+
     public String getPackPath(String packName){
 
         String packPath = StringTools.replaceFileSeparator(packName,".");
@@ -50,25 +56,45 @@ public class PackLoader implements Loader, LifeCycle {
              if (path.contains(".class")){
                  String s  = path.substring(basePath.length()-1,path.lastIndexOf(".class"));
                  Class<?>  c = Class.forName( s.replace("\\","."))  ;
-                 if (HttpServlet.class.isAssignableFrom(c)){
-                     Annotation[] annotations = c.getAnnotations();
-                     for (int i=0;i<annotations.length;i++){
-                         if (annotations[i] instanceof WebServlet){
-
-                             WebServlet webServlet = (WebServlet) annotations[i];
-
-                             Constructor<HttpServlet> constructor = (Constructor<HttpServlet>) c.getConstructor();
-                             HttpServlet object = constructor.newInstance();
-                             ServletProxy proxy    = new ServletProxy(webServlet,object);
-                             httpServletMap.put(webServlet.name(),proxy);
-                             break;
-                         }
-                     }
+                 if (Filter.class.isAssignableFrom(c)){
+                     addFilter(c);
+                 }else if (HttpServlet.class.isAssignableFrom(c)){
+                     addServlet(c);
                  }
-
              }
           }
         }
+    }
+    void addServlet(Class<?> c) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+            Annotation[] annotations = c.getAnnotations();
+            for (int i=0;i<annotations.length;i++){
+                if (annotations[i] instanceof WebServlet){
+
+                    WebServlet webServlet = (WebServlet) annotations[i];
+                    Constructor<HttpServlet> constructor = (Constructor<HttpServlet>) c.getConstructor();
+                    HttpServlet object = constructor.newInstance();
+                    ServletProxy proxy    = new ServletProxy(webServlet,object);
+                    httpServlets.add(proxy);
+                    break;
+                }
+            }
+    }
+    void addFilter(Class<?> c) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+
+        Annotation[] annotations = c.getAnnotations();
+        for (int i=0;i<annotations.length;i++){
+            if (annotations[i] instanceof WebFilter){
+
+                WebFilter webFilter = (WebFilter) annotations[i];
+                Constructor<Filter> constructor = (Constructor<Filter>) c.getConstructor();
+                Filter object = constructor.newInstance();
+                FilterProxy proxy    = new FilterProxy(webFilter);
+                filterProxies.add(proxy);
+                break;
+            }
+        }
+    }
+    void addListener(Class<?> c){
 
     }
     public void walkClass(FileFilter filter){
@@ -85,9 +111,6 @@ public class PackLoader implements Loader, LifeCycle {
         }
 
     }
-
-
-
     @Override
     public void init() {
         try {

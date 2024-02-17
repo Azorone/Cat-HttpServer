@@ -1,5 +1,8 @@
 package org.cathttp.javaee.servlet;
 
+import org.cathttp.base.net.inter.LifeCycle;
+import org.cathttp.javaee.request.ServletRequestImplement;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
@@ -7,7 +10,18 @@ import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.util.*;
 
-public class ServletProxy {
+public class ServletProxy  implements LifeCycle {
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
     HttpServlet servlet = null;
     Set<String> urlPatterns = null;
     String name = null;

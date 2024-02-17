@@ -1,4 +1,4 @@
-package org.cathttp.javaee.servlet;
+package org.cathttp.javaee.response;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
