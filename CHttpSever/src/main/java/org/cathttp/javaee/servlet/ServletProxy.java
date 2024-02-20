@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.util.*;
 
-public class ServletProxy  implements LifeCycle {
+public class ServletProxy  implements LifeCycle,RequestDispatcher {
 
     @Override
     public void init() {
@@ -21,7 +21,9 @@ public class ServletProxy  implements LifeCycle {
     public void pause() {
 
     }
-
+    public boolean intercept(String s){
+        return this.urlPatterns.contains(s);
+    }
     HttpServlet servlet = null;
     Set<String> urlPatterns = null;
     String name = null;
@@ -131,5 +133,15 @@ public class ServletProxy  implements LifeCycle {
                 ", webServlet=" + webServlet +
                 ", displayName='" + displayName + '\'' +
                 '}';
+    }
+
+    @Override
+    public void forward(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+        this.servlet.service(servletRequest,servletResponse);
+    }
+
+    @Override
+    public void include(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+
     }
 }

@@ -7,7 +7,11 @@ import org.cathttp.javaee.servlet.ServletProxy;
 
 import javax.servlet.*;
 import javax.servlet.descriptor.JspConfigDescriptor;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSessionListener;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,13 +22,48 @@ public class ServletContextImp implements javax.servlet.ServletContext, LifeCycl
 
     ArrayList<ServletProxy> servletProxies = new ArrayList<>();
     ArrayList<FilterProxy> filterProxies   = new ArrayList<>();
-    FilterChainImplement filterChainImplement = new FilterChainImplement();
+    FilterChainImplement filterChainImplement;
     private static ServletContextImp servletContext = new ServletContextImp();
     ConcurrentHashMap<String,Object> Attribute = new ConcurrentHashMap<>();
+
 
     int MajorVersion = 0;
 
     String contextPath;
+
+    private ServletContextImp(){};
+
+    public static ServletContextImp getServletContext() {
+        return servletContext;
+    }
+
+    public void mapperServlet(HttpServletRequest request, HttpServletResponse response){
+
+    }
+
+    public ArrayList<ServletProxy> getServletProxies() {
+        return servletProxies;
+    }
+
+    public void setServletProxies(ArrayList<ServletProxy> servletProxies) {
+        this.servletProxies = servletProxies;
+    }
+
+    public ArrayList<FilterProxy> getFilterProxies() {
+        return filterProxies;
+    }
+
+    public void setFilterProxies(ArrayList<FilterProxy> filterProxies) {
+        this.filterProxies = filterProxies;
+    }
+
+    public FilterChainImplement getFilterChainImplement() {
+        return filterChainImplement;
+    }
+
+    public void setFilterChainImplement(FilterChainImplement filterChainImplement) {
+        this.filterChainImplement = filterChainImplement;
+    }
 
     private void sortFilter(){
         filterProxies.sort(new Comparator<FilterProxy>() {
@@ -43,16 +82,38 @@ public class ServletContextImp implements javax.servlet.ServletContext, LifeCycl
         });
     }
 
-    private void  init0(){
+    public void run(HttpServletRequest httpServletRequest,HttpServletResponse response){
+
+        try {
+            filterChainImplement.doFilter(httpServletRequest,response);
+        }catch (Exception E){
+            E.printStackTrace();
+        }
+
+    }
+
+    public void  init0(){
+        FilterChainImplement filterChainImplement1 = new FilterChainImplement(new Filter() {
+            @Override
+            public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+                filterChain.doFilter(servletRequest,servletResponse);
+            }
+        });
+        this.filterChainImplement = filterChainImplement1;
         for (FilterProxy fp:filterProxies){
             fp.init();
             filterChainImplement.addFilter(fp.getCurFilter());
         }
+        filterChainImplement.build(servletContext);
+
         for (ServletProxy sp:servletProxies){
             sp.getServlet();
             sp.init();
         }
     }
+
+
+
     @Override
     public void init() {
 
@@ -118,8 +179,17 @@ public class ServletContextImp implements javax.servlet.ServletContext, LifeCycl
     //
     @Override
     public RequestDispatcher getRequestDispatcher(String s) {
+           for (ServletProxy proxy:servletProxies){
+              if (proxy.getUrlPatterns().contains(s)){
+                  return proxy;
+              }
+           }
+
+
         return null;
     }
+
+
 
     @Override
     public RequestDispatcher getNamedDispatcher(String s) {

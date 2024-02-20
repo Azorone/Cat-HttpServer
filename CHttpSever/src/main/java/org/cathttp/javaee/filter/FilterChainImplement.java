@@ -3,6 +3,8 @@ package org.cathttp.javaee.filter;
 import org.cathttp.javaee.context.ServletContextImp;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -10,17 +12,24 @@ public class FilterChainImplement implements FilterChain {
     FilterProxy filterProxy;
     FilterChainImplement  nextFilter;
     boolean end = false;
-    ServletContextImp servletContextImp = new ServletContextImp();
+    ServletContextImp servletContextImp = ServletContextImp.getServletContext();
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException, ServletException {
-
+             HttpServletRequest req = (HttpServletRequest) servletRequest;
             if (end){
                 System.out.println("过滤器链条结束..进入Servlet 分发");
-                servletContextImp.getRequestDispatcher("/").forward(servletRequest,servletResponse);
+                if (servletContextImp!=null){
+                   RequestDispatcher s = servletContextImp.getRequestDispatcher("/");
+                   if (s!=null){
+                       s.forward(servletRequest,servletResponse);
+                   }
+                   System.out.println("没拦截");
+                }
                 return;
             }
             System.out.println("下一个过滤器");
-            if (filterProxy.isIntercept()){
+
+            if ( filterProxy.isIntercept(req.getRequestURI())){
 
                 System.out.println("符合拦截条件");
                 filterProxy.curFilter.doFilter(servletRequest,servletResponse,nextFilter);

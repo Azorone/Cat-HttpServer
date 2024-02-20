@@ -87,8 +87,8 @@ public class PackLoader implements Loader, LifeCycle {
 
                 WebFilter webFilter = (WebFilter) annotations[i];
                 Constructor<Filter> constructor = (Constructor<Filter>) c.getConstructor();
-                Filter object = constructor.newInstance();
-                FilterProxy proxy    = new FilterProxy(webFilter);
+                Filter filter = constructor.newInstance();
+                FilterProxy proxy    = new FilterProxy(webFilter,filter);
                 filterProxies.add(proxy);
                 break;
             }
@@ -124,6 +124,14 @@ public class PackLoader implements Loader, LifeCycle {
             e.printStackTrace();
         }
 
+    }
+
+    public ArrayList<FilterProxy> getFilterProxies() {
+        return filterProxies;
+    }
+
+    public ArrayList<ServletProxy> getHttpServlets() {
+        return httpServlets;
     }
 
     @Override

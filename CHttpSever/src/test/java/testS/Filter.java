@@ -3,7 +3,7 @@ package testS;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
-@WebFilter(urlPatterns = "/")
+@WebFilter(urlPatterns = "/",filterName = "ces1")
 public class Filter implements javax.servlet.Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
