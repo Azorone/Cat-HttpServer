@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: org.cathttp.Main
+Class-Path: javax.servlet-api-4.0.0.jar
+

@@ -8,12 +8,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 @WebServlet(
         name = "testA",
-        urlPatterns = "/测试"
+        urlPatterns = "/test"
 )
 public class testServlet extends HttpServlet {
+    Ees ees = new Ees();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
+        ees.ss();
     }
 
     @Override

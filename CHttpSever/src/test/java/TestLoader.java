@@ -1,5 +1,6 @@
 import org.cathttp.javaee.servlet.ServletProxy;
 import org.cathttp.loaded.PackLoader;
+import org.cathttp.loaded.StaticLoader;
 import org.junit.Test;
 import testF.testServlet;
 
@@ -39,23 +40,12 @@ public class TestLoader {
      *当出现重名，和一个路径映射多个实例时，服务器停止加载
      *
      * ***/
-    @Test
-    public void builderLoader(){
-
-    }
-    /***
-     * 重名检查
-     * ***/
-    @Test
-    public void DuplicateNameCheck(){
-
-    }
 
     @Test
-    public void testClassFrom(){
-
-       testF.testServlet  servlet = new testServlet();
-       System.out.println(  HttpServlet.class.isAssignableFrom(servlet.getClass()));
-
+    public void testStaticLoad(){
+        StaticLoader s = new StaticLoader();
+        s.mapperStatic("C:\\Users\\Azero\\Desktop\\LowCodeView","\\");
+        s.showPath();
     }
+
 }

@@ -16,21 +16,21 @@ public class TestContext {
     public void testContext(){
 
         ServletContextImp servletContextImp = ServletContextImp.getServletContext();
-
         PackLoader loader = new PackLoader("testF","testS");
         loader.init();
         ArrayList<ServletProxy> S  = loader.getHttpServlets();
         ArrayList<FilterProxy> F   = loader.getFilterProxies();
-
         for (ServletProxy s:S){
            System.out.println(s.getName());
         }
         for (FilterProxy f:F){
             System.out.println(f.getFilterName());
+            System.out.println(f.getUrlPatterns());
         }
         servletContextImp.setServletProxies(S);
         servletContextImp.setFilterProxies(F);
-        servletContextImp.init0();
-        servletContextImp.run(new ServletRequestImplement(),new ServletResponseImplements());
+
+        servletContextImp.init();
+        servletContextImp.run(new ServletRequestImplement("/test"),new ServletResponseImplements());
     }
 }

@@ -3,12 +3,10 @@ package org.cathttp.loaded;
 import org.cathttp.base.net.inter.LifeCycle;
 import org.cathttp.javaee.filter.FilterProxy;
 import org.cathttp.javaee.servlet.ServletProxy;
-import org.cathttp.tools.FileFilter;
+
 import org.cathttp.tools.StringTools;
 
 import javax.servlet.Filter;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,10 +16,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public class PackLoader implements Loader, LifeCycle {
+public class PackLoader implements LifeCycle {
     String basePath;
     String[] packPath;
-    public ArrayList<Class<?>> classArrayList = new ArrayList<>();
     public ArrayList<ServletProxy> httpServlets = new ArrayList<>();
     public ArrayList<FilterProxy> filterProxies = new ArrayList<>();
 
@@ -33,9 +30,7 @@ public class PackLoader implements Loader, LifeCycle {
         return classPack+packPath;
     }
     public Class<?> loadClass(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-
         return Class.forName(className);
-
     }
     public void walkClass(String name) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         ArrayDeque<File> fileDeque = new ArrayDeque<>();
@@ -69,7 +64,6 @@ public class PackLoader implements Loader, LifeCycle {
             Annotation[] annotations = c.getAnnotations();
             for (int i=0;i<annotations.length;i++){
                 if (annotations[i] instanceof WebServlet){
-
                     WebServlet webServlet = (WebServlet) annotations[i];
                     Constructor<HttpServlet> constructor = (Constructor<HttpServlet>) c.getConstructor();
                     HttpServlet object = constructor.newInstance();
@@ -95,9 +89,6 @@ public class PackLoader implements Loader, LifeCycle {
         }
     }
     void addListener(Class<?> c){
-
-    }
-    public void walkClass(FileFilter filter){
 
     }
     public PackLoader(){

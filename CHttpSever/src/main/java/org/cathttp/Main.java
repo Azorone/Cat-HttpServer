@@ -12,11 +12,13 @@ import java.lang.reflect.Method;
 
 public class Main {
     public static void main(String[] args) throws UnsupportedEncodingException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        System.out.println("Hello world!");
 
-
+        System.out.println("欢迎使用CHttpSever");
         //Accept a = new Accept(8080);
-       Server server = new Server(8080);
+       Server server = new Server("testF","testS");
+        server.run();
+
+     // server.init();
         //PackLoader packLoader = new PackLoader("");
         //String path = packLoader.getPackPath("org.cathttp.tools");
         //System.out.println(path);

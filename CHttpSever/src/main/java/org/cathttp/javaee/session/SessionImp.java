@@ -3,15 +3,19 @@ package org.cathttp.javaee.session;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SessionImp implements HttpSession {
+public class SessionImp implements HttpSession, Serializable {
 
-
+    @Serial
+    private static final long serialVersionUID = 20242261016L;
     Map<String,Object> map = new HashMap<>();
-
+    String JSESSIONID;
+    ServletContext servletContext;
     @Override
     public long getCreationTime() {
         return 0;
@@ -49,12 +53,12 @@ public class SessionImp implements HttpSession {
 
     @Override
     public Object getAttribute(String s) {
-        return null;
+        return map.get(s);
     }
     @Deprecated
     @Override
     public Object getValue(String s) {
-        return null;
+        return map.get(s);
     }
 
     @Override
@@ -69,7 +73,7 @@ public class SessionImp implements HttpSession {
 
     @Override
     public void setAttribute(String s, Object o) {
-
+        map.put(s,o);
     }
     @Deprecated
     @Override
@@ -95,5 +99,10 @@ public class SessionImp implements HttpSession {
     @Override
     public boolean isNew() {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return null;
     }
 }

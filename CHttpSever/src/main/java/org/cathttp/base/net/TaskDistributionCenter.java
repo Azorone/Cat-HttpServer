@@ -53,27 +53,24 @@ public class TaskDistributionCenter implements DistributionCenter<SocketChannel>
            try {
                cl =  take();
                get = true;
-
            }catch (InterruptedException e){
                //停止处理？
            }
-
            if (get){
              HttpTask task = new HttpTask(cl, TaskStatus.REGISTER_WAIT);
              try {
                  workers[getWorkerIndex()].submit(task);
              }catch
              (IllegalStateException exception){
-                //该工作队列满处理
              }
            }
-
         return get;
     }
 
     public int getWorkerIndex(){ //用来计算把任务分给哪一个处理线程
        int v = num % w_size;
-       num++;
+       if (num > Integer.MAX_VALUE-60){num=-1;}
+         num++;
        return v   ;
     }
     public SocketChannel take() throws InterruptedException {
@@ -83,6 +80,7 @@ public class TaskDistributionCenter implements DistributionCenter<SocketChannel>
     @Override
     public void run() {
         boolean run = true;
+        System.out.println("调度者初始化完成");
         while (run){
             try {
                 distribution();
@@ -101,14 +99,15 @@ public class TaskDistributionCenter implements DistributionCenter<SocketChannel>
     }
     @Override
     public void init() {
+        System.out.println("调度者初始化中...");
         if (workers!=null){
             for(int i=0;i< workers.length;i++){
                 workers[i] = new Worker(i,new LinkedBlockingQueue<>());
                 workers[i].init();
                 workers[i].start();
             }
-            System.out.println("工作者初始化");
         }
+
     }
     @Override
     public void pause() {

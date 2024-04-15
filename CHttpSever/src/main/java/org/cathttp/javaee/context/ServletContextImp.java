@@ -1,6 +1,7 @@
 package org.cathttp.javaee.context;
 
 import org.cathttp.base.net.inter.LifeCycle;
+import org.cathttp.javaee.filter.FilterChainBuilder;
 import org.cathttp.javaee.filter.FilterChainImplement;
 import org.cathttp.javaee.filter.FilterProxy;
 import org.cathttp.javaee.servlet.ServletProxy;
@@ -93,33 +94,23 @@ public class ServletContextImp implements javax.servlet.ServletContext, LifeCycl
     }
 
     public void  init0(){
-        FilterChainImplement filterChainImplement1 = new FilterChainImplement(new Filter() {
+     /*   this.filterChainImplement = new FilterChainImplement(new Filter() {
             @Override
             public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
                 filterChain.doFilter(servletRequest,servletResponse);
             }
-        });
-        this.filterChainImplement = filterChainImplement1;
-        for (FilterProxy fp:filterProxies){
-            fp.init();
-            filterChainImplement.addFilter(fp.getCurFilter());
-        }
-        filterChainImplement.build(servletContext);
+        });*/
+        /******
+         * BUG 应使用链表
+         * ******/
 
-        for (ServletProxy sp:servletProxies){
-            sp.getServlet();
-            sp.init();
-        }
     }
 
 
 
     @Override
     public void init() {
-
-
-
-
+            init0();
     }
 
     @Override
@@ -184,8 +175,6 @@ public class ServletContextImp implements javax.servlet.ServletContext, LifeCycl
                   return proxy;
               }
            }
-
-
         return null;
     }
 

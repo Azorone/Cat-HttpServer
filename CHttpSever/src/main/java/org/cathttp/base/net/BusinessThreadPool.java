@@ -1,4 +1,4 @@
-package org.cathttp.async.threadpool;
+package org.cathttp.base.net;
 
 import org.cathttp.base.net.inter.LifeCycle;
 
@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BusinessThreadPool implements LifeCycle {
     private final AtomicInteger MAX_TEMP_SIZE = new AtomicInteger(0);
     private PoolConfig config;
-
     private static final BusinessThreadPool businessThreadPool = new BusinessThreadPool();
     private BusinessThreadPool(){
        this.config = new PoolConfig();
@@ -77,6 +76,7 @@ public class BusinessThreadPool implements LifeCycle {
     }
     @Override
     public void init() {
+        System.out.println("线程池初始化中...");
         if (this.config == null){
             this.config = new PoolConfig();
         }
@@ -92,9 +92,10 @@ public class BusinessThreadPool implements LifeCycle {
 
     @Override
     public void pause() {
+        System.out.println("线程池销毁中...");
             poolExecutor.shutdown();
     }
-
+    long sleepMoRen = 100;
     public void submit(Runnable runnable) throws InterruptedException {
         int key = 0;
         try {
@@ -109,7 +110,7 @@ public class BusinessThreadPool implements LifeCycle {
                     System.out.println("被拒绝次数："+key);
                     key = 0;
                 }catch (RejectedExecutionException r0){
-                    Thread.sleep(100);
+                    Thread.sleep(sleepMoRen);
                     key = key + 1;
                 }
             }
