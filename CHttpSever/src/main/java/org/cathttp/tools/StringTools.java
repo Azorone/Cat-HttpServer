@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 public class StringTools {
 
+
    public final static Charset  UTF8 = StandardCharsets.UTF_8;
    public final static Charset  ISO  = StandardCharsets.ISO_8859_1;
     public static String  replace(String src,String tar,String re){
@@ -24,6 +25,11 @@ public class StringTools {
     }
     public static byte[] stringToByte(StringBuilder str,Charset charset){
         return str.toString().getBytes(charset);
+    }
+
+    public static boolean stringFileNameTailMatch(String exp,String src){
+        String regex = ".*\\."+exp+"$";
+        return src.matches(regex);
     }
 
 }

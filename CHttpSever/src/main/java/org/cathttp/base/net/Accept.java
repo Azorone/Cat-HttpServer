@@ -10,15 +10,17 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Accept extends Thread implements LifeCycle {
 
     Selector selector;
     private int port;
-    TaskDistributionCenter taskDistributionCenter = new TaskDistributionCenter(new Worker[1], new LinkedBlockingQueue<SocketChannel>());
+    TaskDistributionCenter taskDistributionCenter;
     private ServerSocketChannel socketChannel;
 
+    private boolean run = true;
     public Accept(int port){
         this.port = port;
     }
@@ -26,7 +28,8 @@ public class Accept extends Thread implements LifeCycle {
     @Override
     public void run() {
         try {
-            while (true){
+            System.out.println("Accept初始化成功...");
+            while (run){
                 this.selector.select(500);
                 Set<SelectionKey> selectionKeys = this.selector.selectedKeys();
                 Iterator<SelectionKey> selectionKeyIterator = selectionKeys.iterator();
@@ -45,20 +48,23 @@ public class Accept extends Thread implements LifeCycle {
         }catch (IOException e){
             e.printStackTrace();
         }
-
     }
-
     @Override
     public void init() {
         try {
+            System.out.println("Accept初始化中...");
+            taskDistributionCenter = new TaskDistributionCenter(new Worker[6], new LinkedBlockingDeque<>());
+            taskDistributionCenter.init();
             this.selector = Selector.open();
             socketChannel = ServerSocketChannel.open();
             socketChannel.bind(new InetSocketAddress(port));
-            taskDistributionCenter.init();
+
             socketChannel.configureBlocking(false);
             socketChannel.register(this.selector,SelectionKey.OP_ACCEPT);
+
             Thread thread = new Thread(taskDistributionCenter);
             thread.start();
+
         }catch (IOException e){
             e.printStackTrace();
             return;
@@ -67,6 +73,6 @@ public class Accept extends Thread implements LifeCycle {
 
     @Override
     public void pause() {
-
+        this.run = false;
     }
 }
